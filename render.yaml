@@ -1,0 +1,20 @@
+# render.yaml - Render Blueprint for ResumeAI Pro
+# Deploy the full-stack app (FastAPI backend + React frontend) as a single service
+
+services:
+  - type: web
+    name: resumeai-pro
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: NODE_VERSION
+        value: "18"
+      - key: DATABASE_URL
+        value: "sqlite:///./resumeai.db"
+      - key: GEMINI_API_KEY
+        sync: false  # You will set this manually in Render dashboard
