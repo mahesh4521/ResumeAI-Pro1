@@ -3,6 +3,11 @@ import json
 import re
 from typing import Dict, List, Any
 import logging
+import os
+from dotenv import load_dotenv
+import google.generativeai as genai
+
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -11,29 +16,57 @@ logger = logging.getLogger(__name__)
 class OllamaService:
     def __init__(self, model_name: str = "llama3.2"):
         self.model_name = model_name
-        self.client = ollama
+        self.gemini_api_key = os.getenv("GEMINI_API_KEY")
+        if self.gemini_api_key:
+            logger.info("GEMINI_API_KEY detected. Switching to Google Gemini API (gemini-1.5-flash).")
+            genai.configure(api_key=self.gemini_api_key)
+            self.use_gemini = True
+        else:
+            logger.info("No GEMINI_API_KEY detected. Defaulting to local Ollama client.")
+            self.use_gemini = False
+            self.client = ollama
         
     def _make_request(self, prompt: str, system_message: str = None) -> str:
-        """Make a request to Ollama"""
-        try:
-            messages = []
-            if system_message:
-                messages.append({"role": "system", "content": system_message})
-            messages.append({"role": "user", "content": prompt})
-            
-            response = self.client.chat(
-                model=self.model_name,
-                messages=messages,
-                options={
-                    "temperature": 0.7,
-                    "top_p": 0.9,
-                    "max_tokens": 2000
-                }
-            )
-            return response['message']['content']
-        except Exception as e:
-            logger.error(f"Error making Ollama request: {str(e)}")
-            return ""
+        """Make a request to the configured AI model (Gemini or Ollama)"""
+        if self.use_gemini:
+            try:
+                # Initialize Gemini model
+                model = genai.GenerativeModel(
+                    model_name="gemini-1.5-flash",
+                    system_instruction=system_message
+                )
+                response = model.generate_content(
+                    prompt,
+                    generation_config=genai.types.GenerationConfig(
+                        temperature=0.7,
+                        top_p=0.9,
+                        max_output_tokens=2000
+                    )
+                )
+                return response.text
+            except Exception as e:
+                logger.error(f"Error making Gemini request: {str(e)}")
+                return ""
+        else:
+            try:
+                messages = []
+                if system_message:
+                    messages.append({"role": "system", "content": system_message})
+                messages.append({"role": "user", "content": prompt})
+                
+                response = self.client.chat(
+                    model=self.model_name,
+                    messages=messages,
+                    options={
+                        "temperature": 0.7,
+                        "top_p": 0.9,
+                        "max_tokens": 2000
+                    }
+                )
+                return response['message']['content']
+            except Exception as e:
+                logger.error(f"Error making Ollama request: {str(e)}")
+                return ""
     
     async def chat(self, message: str) -> str:
         """Simple chat method for testing"""

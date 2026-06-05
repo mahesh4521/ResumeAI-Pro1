@@ -3,6 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import resume_router, role_router
 import uvicorn
 import logging
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -15,13 +19,18 @@ app = FastAPI(
 )
 
 # CORS middleware
+allowed_origins = [
+    "http://localhost:3006", 
+    "http://127.0.0.1:3006",
+    "http://77.37.45.138:3006"
+]
+env_origins = os.getenv("ALLOWED_ORIGINS")
+if env_origins:
+    allowed_origins = [o.strip() for o in env_origins.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3006", 
-        "http://127.0.0.1:3006",
-        "http://77.37.45.138:3006"
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

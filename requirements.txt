@@ -12,3 +12,5 @@ scikit-learn
 numpy
 pandas
 requests
+google-generativeai
+python-dotenv
