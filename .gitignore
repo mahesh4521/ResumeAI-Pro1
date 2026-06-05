@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+win_venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Databases
+*.sqlite3
+*.db
+
+# Node / JS
+node_modules/
+frontend/node_modules/
+frontend/build/
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment / Keys
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# System / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Application Uploads & Logs
+uploads/
+*.log
+backend.log
+monitor.log
+service-monitor.log
+frontend.log

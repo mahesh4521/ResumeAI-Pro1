@@ -1,0 +1,11 @@
+{
+  "files": {
+    "main.css": "/ResumeAI-Pro1/static/css/main.aaa70fa7.css",
+    "main.js": "/ResumeAI-Pro1/static/js/main.424748f3.js",
+    "index.html": "/ResumeAI-Pro1/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.aaa70fa7.css",
+    "static/js/main.424748f3.js"
+  ]
+}
